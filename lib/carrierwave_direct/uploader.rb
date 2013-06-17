@@ -35,6 +35,15 @@ module CarrierWaveDirect
       fog_public ? 'public-read' : 'private'
     end
 
+    def require_default_key
+      @require_default_key = true
+    end
+
+    def key=(k)
+      @key = k
+      update_version_keys(:with => @key)
+    end
+
     def policy(options = {}, &block)
       options[:expiration] ||= upload_expiration
       options[:min_file_size] ||= min_file_size
@@ -80,13 +89,14 @@ module CarrierWaveDirect
       false
     end
 
+    #self.key = "#{store_dir}/#{identifier}"
     def key
       return @key if @key.present?
-      if present?
+      if @require_default_key || !present?
         identifier = model.send("#{mounted_as}_identifier")
         self.key = "#{store_dir}/#{identifier}"
       else
-        @key = "#{store_dir}/#{guid}/#{FILENAME_WILDCARD}"
+        self.key = URI.parse(URI.encode(url)).path[1 .. -1] # explicitly set key      
       end
       @key
     end
