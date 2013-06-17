@@ -1,5 +1,4 @@
 # encoding: utf-8
-
 require "carrierwave_direct/uploader/content_type"
 require "carrierwave_direct/uploader/direct_url"
 
@@ -58,12 +57,21 @@ module CarrierWaveDirect
       false
     end
 
+    def require_default_key
+      @require_default_key = true
+    end
+
+    def key=(k)
+      @key = k
+      update_version_keys(:with => @key)
+    end
+
     def key
       return @key if @key.present?
-      if present?
-        self.key = decoded_key # explicitly set key
-      else
+      if @require_default_key || !present?
         @key = "#{store_dir}/#{guid}/#{FILENAME_WILDCARD}"
+      else        
+        self.key = URI.parse(URI.encode(url)).path[1 .. -1] # explicitly set key
       end
       @key
     end
