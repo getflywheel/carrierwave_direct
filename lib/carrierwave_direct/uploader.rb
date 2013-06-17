@@ -1,9 +1,12 @@
 # encoding: utf-8
+<<<<<<< a0bc3230e544c0ea88f35d2bb6b7eb6a1fdb9196
 
 require "securerandom"
 require "carrierwave_direct/uploader/content_type"
 require "carrierwave_direct/uploader/direct_url"
 
+=======
+>>>>>>> require_default_key method
 module CarrierWaveDirect
   module Uploader
     extend ActiveSupport::Concern
@@ -35,6 +38,7 @@ module CarrierWaveDirect
       fog_public ? 'public-read' : 'private'
     end
 
+<<<<<<< a0bc3230e544c0ea88f35d2bb6b7eb6a1fdb9196
     def policy(options = {}, &block)
       options[:expiration] ||= upload_expiration
       options[:min_file_size] ||= min_file_size
@@ -78,15 +82,30 @@ module CarrierWaveDirect
 
     def persisted?
       false
+=======
+    def require_default_key
+      @require_default_key = true
+    end
+
+    def key=(k)
+      @key = k
+      update_version_keys(:with => @key)
+>>>>>>> require_default_key method
     end
 
     def key
       return @key if @key.present?
+<<<<<<< a0bc3230e544c0ea88f35d2bb6b7eb6a1fdb9196
       if present?
         identifier = model.send("#{mounted_as}_identifier")
         self.key = "#{store_dir}/#{identifier}"
       else
+=======
+      if @require_default_key || !present?
+>>>>>>> require_default_key method
         @key = "#{store_dir}/#{guid}/#{FILENAME_WILDCARD}"
+      else
+        self.key = URI.parse(URI.encode(url)).path[1 .. -1] # explicitly set key
       end
       @key
     end
