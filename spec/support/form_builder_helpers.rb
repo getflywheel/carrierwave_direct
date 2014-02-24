@@ -2,6 +2,8 @@
 
 require 'action_view'
 require 'action_view/template'
+require 'action_controller'
+require 'active_model'
 
 require File.join(File.dirname(__FILE__), 'view_helpers')
 
@@ -10,9 +12,17 @@ require 'carrierwave_direct/action_view_extensions/form_helper'
 
 module FormBuilderHelpers
   include ActionView::Helpers::FormHelper
+  include ActionView::Helpers::FormOptionsHelper
   include CarrierWaveDirect::ActionViewExtensions::FormHelper
   include ActionView::Context
-  include ActionController::RecordIdentifier
+
+  # Try ActionView::RecrodIentifier for Rails 4
+  # else use ActionController::RecordIdentifier for Rails 3.2
+  begin
+    include ActionView::RecordIdentifier
+  rescue
+    include ActionController::RecordIdentifier
+  end
 
   include ::ViewHelpers
 
