@@ -76,12 +76,16 @@ module CarrierWaveDirect
       false
     end
 
+    def require_default_key
+      @require_default_key = true
+    end
+
     def key
       return @key if @key.present?
-      if present?
-        self.key = URI.parse(URI.encode(url, " []+()")).path[1 .. -1] # explicitly set key
-      else
+      if @require_default_key || !present?
         @key = "#{store_dir}/#{guid}/#{FILENAME_WILDCARD}"
+      else
+        self.key = URI.parse(URI.encode(url)).path[1 .. -1] # explicitly set key
       end
       @key
     end
