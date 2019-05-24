@@ -66,7 +66,6 @@ module CarrierWaveDirect
       options[:max_file_size] ||= self.class.max_file_size
 
       conditions = [
-        ["starts-with", "$utf8", ""],
         ["starts-with", "$key", key.sub(/#{Regexp.escape(FILENAME_WILDCARD)}\z/, "")]
       ]
       conditions << ["starts-with", "$Content-Type", ""] if self.class.will_include_content_type
